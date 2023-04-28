@@ -6,9 +6,11 @@ const addressInput = document.getElementById('address')! as HTMLInputElement;
 const GOOGLE_API_KEY = 'xxxxx';
 
 type GoogleGeocodingResponse = {
-  results: {geometory: {location: {lat: number, lng: number}}}[];
+  results: {geometry: {location: {lat: number, lng: number}}}[];
   status: 'OK' | 'ZERO_RESULTS';
 };
+
+// declare var google: any;
 
 function searchAddressHandler(event: Event) {
   event.preventDefault();
@@ -20,8 +22,19 @@ function searchAddressHandler(event: Event) {
       if (response.data.status !== 'OK') {
         throw new Error('座標を取得できませんでした。');
       }
-      const coordinates = response.data.results[0].geometory.location;
+      const coordinates = response.data.results[0].geometry.location;
       console.log(coordinates);
+
+      const map = new google.maps.Map(document.getElementById('map')!, {
+        center: coordinates,
+        zoom: 16
+      });
+
+      new google.maps.Marker({
+        position: coordinates,
+        map: map,
+      });
+
     })
     .catch(err => {
       alert(err.message);
